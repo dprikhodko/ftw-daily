@@ -93,14 +93,88 @@ export const exposeImageProps = data => {
 };
 
 /**
- * Exposes "color" property, if it contains hexadecimal string like "#FF0000" or "#F00".
+ * Helper that exposes "color" value, if it contains hexadecimal string like "#FF0000" or "#F00".
  *
- * @param {Object} data E.g. "{ type: 'hexColor', color: '#FFFFFF' }"
- * @returns object containing color prop.
+ * @param {String} data E.g. "#FFFFFF"
+ * @returns Object containing valid color prop.
  */
-export const exposeColorProps = data => {
-  const color = data?.color;
+const exposeColorValue = color => {
   const re = new RegExp('^#([0-9a-f]{3}){1,2}$', 'i');
   const isValidColor = typeof color === 'string' && re.test(color);
-  return isValidColor ? { color } : {};
+  return isValidColor ? color : null;
+};
+
+/**
+ * Exposes background props like "backgroundImage", "color" property,
+ * if backgroundImage contains imageAsset entity and
+ * color contains hexadecimal string like "#FF0000" or "#F00".
+ *
+ * @param {Object} data E.g. "{ type: 'customBackground', backgroundImage: imageAssetRef, color: '#000000', textColor: '#FFFFFF' }"
+ * @returns object containing valid data.
+ */
+export const exposeCustomBackgroundProps = data => {
+  const { backgroundImage, color, textColor, alt } = data;
+  const { id, type, attributes } = backgroundImage || {};
+
+  if (!!type && type !== 'imageAsset') {
+    return {};
+  }
+
+  const validColor = exposeColorValue(color);
+  const isValidColor = !!validColor;
+  const backgroundColorMaybe = isValidColor ? { color: validColor } : {};
+  const isValidTextColor = ['light', 'dark'].includes(textColor);
+  const textColorMaybe = isValidTextColor ? { textColor } : {};
+
+  const variantEntries = Object.entries(backgroundImage?.attributes?.variants || {});
+  const variants = variantEntries.reduce((validVariants, entry) => {
+    const [key, value] = entry;
+    const { url, width, height } = value || {};
+
+    const isValid = typeof width === 'number' && typeof height === 'number';
+    return isValid
+      ? {
+          ...validVariants,
+          [key]: { url: sanitizeUrl(url), width, height },
+        }
+      : validVariants;
+  }, {});
+
+  const isValidImage = Object.keys(variants).length > 0;
+  const sanitizedImage = { id, type, attributes: { ...attributes, variants } };
+  const backgroundImageMaybe = isValidImage ? { backgroundImage: sanitizedImage, alt } : {};
+
+  return {
+    ...backgroundImageMaybe,
+    ...backgroundColorMaybe,
+    ...textColorMaybe,
+  };
+};
+
+/**
+ * Exposes "youtubeVideoId" and "aspectRatio",
+ * if they meet the regexp rules.
+ *
+ * @param {Object} data E.g. "{ type: 'link', label: 'my title', href: 'https://my.domain.com' }"
+ * @returns object containing children and href.
+ */
+export const exposeYoutubeProps = data => {
+  const { youtubeVideoId, aspectRatio } = data;
+  const isString = str => typeof str === 'string' && str?.length > 0;
+
+  const hasYoutubeVideoId =
+    isString(youtubeVideoId) &&
+    youtubeVideoId.length < 12 &&
+    youtubeVideoId.match(/^[a-zA-Z0-9_-]+$/i);
+  const cleanYoutubeVideoId = hasYoutubeVideoId ? encodeURIComponent(youtubeVideoId) : null;
+
+  const hasAspectRatio = isString(aspectRatio) && aspectRatio.match(/^(\d+)\/(\d+)+$/);
+  const aspectRatioMaybe = hasAspectRatio ? { aspectRatio } : {};
+
+  return cleanYoutubeVideoId
+    ? {
+        youtubeVideoId: cleanYoutubeVideoId,
+        ...aspectRatioMaybe,
+      }
+    : {};
 };
