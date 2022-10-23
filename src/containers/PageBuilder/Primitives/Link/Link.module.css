@@ -1,3 +1,8 @@
 .link {
+  display: inline-block;
   color: var(--marketplaceColor);
+
+  & + * {
+    margin-top: 24px;
+  }
 }

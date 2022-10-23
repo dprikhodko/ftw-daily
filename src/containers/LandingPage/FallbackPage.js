@@ -7,69 +7,16 @@ export const fallbackSections = {
   sections: [
     {
       sectionType: 'features',
-      sectionId: 'hero',
-      background: { type: 'hexColor', color: '#ffff00' },
-      // backgroundImage: {
-      //   type: 'image',
-      //   alt: 'Background image',
-      //   image: {
-      //     id: 'image',
-      //     type: 'imageAsset',
-      //     attributes: {
-      //       variants: {
-      //         square1x: {
-      //           url: `https://picsum.photos/400/400`,
-      //           width: 400,
-      //           height: 400,
-      //         },
-      //         square2x: {
-      //           url: `https://picsum.photos/800/800`,
-      //           width: 800,
-      //           height: 800,
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
-      blocks: [
-        {
-          blockType: 'default-block',
-          blockId: 'hero-content',
-          media: {
-            type: 'image',
-            alt: 'First image',
-            image: {
-              id: 'image',
-              type: 'imageAsset',
-              attributes: {
-                variants: {
-                  square1x: {
-                    url: `https://picsum.photos/400/400`,
-                    width: 400,
-                    height: 400,
-                  },
-                  square2x: {
-                    url: `https://picsum.photos/800/800`,
-                    width: 800,
-                    height: 800,
-                  },
-                },
-              },
-            },
-          },
-          title: { type: 'heading1', content: 'My marketplace' },
-          text: {
-            type: 'markdown',
-            content:
-              '### My unique marketplace for booking listings\n### You can also list your services here!',
-          },
-          callToAction: {
-            type: 'internalButtonLink',
-            href: '/s',
-            label: 'Browse marketplace',
-          },
-        },
-      ],
+      sectionId: 'maintenance-mode',
+      title: {
+        type: 'heading1',
+        content: 'HTTP 500 Internal Server Error',
+      },
+      ingress: {
+        type: 'paragraph',
+        content:
+          'Something went wrong and the browser is unable to show the page. Try refreshing the page or try again later.',
+      },
     },
   ],
 };

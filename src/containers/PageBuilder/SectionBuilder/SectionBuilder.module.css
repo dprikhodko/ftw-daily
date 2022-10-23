@@ -6,11 +6,28 @@
   display: grid;
   justify-content: start;
   margin: 0 auto;
-  padding: 0 32px 64px;
+  padding: 0 32px;
   position: relative;
 
   @media (--viewportMedium) {
     justify-content: center;
+  }
+
+  & + div {
+    padding: 64px 32px 0;
+  }
+}
+
+/* Reduce the white-space after the sectionTitle a bit more than in the Blocks */
+
+.sectionDetails {
+  & h1 + *,
+  & h2 + *,
+  & h3 + *,
+  & h4 + *,
+  & h5 + *,
+  & h6 + * {
+    margin-top: 12px;
   }
 }
 
@@ -61,11 +78,19 @@
 .darkTheme h3,
 .darkTheme h4,
 .darkTheme h5,
-.darkTheme h6,
+.darkTheme h6 {
+  color: var(--matterColorLight);
+
+  &::selection {
+    background-color: cyan;
+    color: unset;
+  }
+}
+
 .darkTheme p,
 .darkTheme li,
 .darkTheme blockquote {
-  color: var(--matterColorLight);
+  color: rgba(255, 255, 255, 0.85);
 
   &::selection {
     background-color: cyan;
